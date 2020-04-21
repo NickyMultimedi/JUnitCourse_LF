@@ -12,4 +12,12 @@ public class HelloWorldTest {
         String expectedValue = "Hello World!";
         assertEquals(expectedValue, testValue);
     }
+
+    @Test
+    public void testSayHelloTo() {
+        HelloWorld hello = new HelloWorld();
+        String testValue = hello.sayHelloTo("Nick");
+        String expectedValue = "Hello Nick";
+        assertEquals(expectedValue, testValue);
+    }
 }
