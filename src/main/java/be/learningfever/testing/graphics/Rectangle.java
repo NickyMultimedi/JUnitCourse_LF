@@ -86,15 +86,4 @@ public class Rectangle {
     public int hashCode() {
         return Objects.hash(getX(), getY(), getHeight(), getWidth());
     }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("Rectangle{");
-        sb.append("x=").append(x);
-        sb.append(", y=").append(y);
-        sb.append(", height=").append(height);
-        sb.append(", width=").append(width);
-        sb.append('}');
-        return sb.toString();
-    }
 }
