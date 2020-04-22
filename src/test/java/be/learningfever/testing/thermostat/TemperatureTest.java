@@ -32,6 +32,8 @@ class TemperatureTest {
         reflexiveTest();
         symmetricTest();
         transitiveTest();
+        consistentTest();
+        nullTest();
     }
 
     private void reflexiveTest() {
@@ -67,7 +69,7 @@ class TemperatureTest {
     }
 
     private void nullTest() {
-        assertNotEquals(null, temp);
+        assertNotEquals(null, temp, "Equals is not null proof");
     }
 
     @Test
