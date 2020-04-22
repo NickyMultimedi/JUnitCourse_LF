@@ -9,34 +9,49 @@ import static org.junit.jupiter.api.Assertions.*;
 class ThermostatTest {
     private final static int INTERVAL = 10;
     private Thermostat therm;
-    private HeatingStub heating;
-    private SensorStub sensor;
+    private HeatingMock heating;
+    private SensorMock sensor;
 
-    private class HeatingStub implements Heating {
+    private class HeatingMock implements Heating {
+        private boolean status;
 
         @Override
         public void setHeating(boolean status) {
+            this.status = status;
+        }
 
+        public boolean isHeating() {
+            return status;
         }
     }
 
-    private class SensorStub implements Sensor {
+    private class SensorMock implements Sensor {
         private float temp = 21f;
+        private boolean called;
 
         @Override
         public Temperature getTemperature() {
+            called = true;
             return new Temperature(temp);
         }
 
         public void setTemperature(float temp) {
             this.temp = temp;
         }
+
+        boolean isCalled() {
+            return called;
+        }
+
+        public void setCalled(boolean status) {
+            called = status;
+        }
     }
 
     @BeforeEach
     void init() {
-        sensor = new SensorStub();
-        heating = new HeatingStub();
+        sensor = new SensorMock();
+        heating = new HeatingMock();
         therm = new Thermostat(sensor, heating);
         therm.setInterval(INTERVAL);
         therm.setTargetTemperature(new Temperature(20f));
@@ -47,8 +62,12 @@ class ThermostatTest {
     @Test
     void testThermostatStartsHeating() throws InterruptedException {
         sensor.setTemperature(19f);
+        sensor.setCalled(false);
+        heating.setHeating(false);
         Thread.sleep(INTERVAL * 3);
-        assertTrue(therm.isHeating());
+        assertTrue(therm.isHeating(), "Stupid thermostat");
+        assertTrue(sensor.isCalled(), "Sensor wasnt called");
+        assertTrue(heating.isHeating(), "Heating wasnt called");
     }
 
     @AfterEach
