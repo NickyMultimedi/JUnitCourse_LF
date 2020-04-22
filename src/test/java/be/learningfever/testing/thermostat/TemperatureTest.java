@@ -1,5 +1,6 @@
 package be.learningfever.testing.thermostat;
 
+import be.learningfever.testing.thermostat.exceptions.InvalidTemperatureException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TemperatureTest {
     private final float TEMP = 21.02f;
+    private final float ABSOLUTE_ZERO = -273.15f;
     private Temperature temp;
 
     @BeforeEach
@@ -16,8 +18,21 @@ class TemperatureTest {
     }
 
     @Test
+    void testAbsoluteZero() {
+        assertEquals(ABSOLUTE_ZERO, Temperature.ABSOLUTE_ZERO);
+    }
+
+    @Test
     void testConstructor() {
         assertEquals(TEMP, temp.getValue());
+    }
+
+    @Test
+    void testConstructorThrowsInvalidTemperatureEException() {
+        assertThrows(
+                InvalidTemperatureException.class,
+                () -> temp.setValue(ABSOLUTE_ZERO - 1)
+        );
     }
 
     @Test
@@ -25,6 +40,57 @@ class TemperatureTest {
         float changedTemp = 22.34f;
         temp.setValue(changedTemp);
         assertEquals(changedTemp, temp.getValue());
+    }
+
+    @Test
+    void testIsBoiling() {
+        final float notBoiling = 99;
+        final float startBoiling = 100;
+        final float isBoiling = 101;
+
+        temp.setValue(notBoiling);
+        assertFalse(temp.isBoiling());
+
+        temp.setValue(startBoiling);
+        assertTrue(temp.isBoiling());
+
+        temp.setValue(isBoiling);
+        assertTrue(temp.isBoiling());
+
+    }
+
+    @Test
+    void testIsFreezing() {
+        final float notFreezing = 1;
+        final float startFreezing = 0;
+        final float isFreezing = -1;
+
+        temp.setValue(notFreezing);
+        assertFalse(temp.isFreezing());
+
+        temp.setValue(startFreezing);
+        assertTrue(temp.isFreezing());
+
+        temp.setValue(isFreezing);
+        assertTrue(temp.isFreezing());
+    }
+
+    @Test
+    void valueCantGoBelowAbsoluteFreezing() {
+        assertDoesNotThrow(
+                () -> temp.setValue(ABSOLUTE_ZERO + 1)
+        );
+
+        assertDoesNotThrow(
+                () -> temp.setValue(ABSOLUTE_ZERO),
+                "absolute Zero reached, exception not thrown"
+        );
+
+        assertThrows(
+                InvalidTemperatureException.class,
+                () -> temp.setValue(ABSOLUTE_ZERO - 1),
+                "Colder than Absolute Zero, exception not thrown"
+        );
     }
 
     @Test

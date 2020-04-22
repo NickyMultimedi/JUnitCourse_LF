@@ -1,8 +1,11 @@
 package be.learningfever.testing.thermostat;
 
+import be.learningfever.testing.thermostat.exceptions.InvalidTemperatureException;
+
 import java.util.Objects;
 
 public class Temperature {
+    public final static float ABSOLUTE_ZERO = -273.15f;
     private float value;
 
     public Temperature(float value) {
@@ -14,7 +17,18 @@ public class Temperature {
     }
 
     public void setValue(float value) {
+        if (value < ABSOLUTE_ZERO) {
+            throw new InvalidTemperatureException("You reached the absolute zero for temperature");
+        }
         this.value = value;
+    }
+
+    public boolean isBoiling(){
+        return value >= 100;
+    }
+
+    public boolean isFreezing() {
+        return value <= 0;
     }
 
     @Override
