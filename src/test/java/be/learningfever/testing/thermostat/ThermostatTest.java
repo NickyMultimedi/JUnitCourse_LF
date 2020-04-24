@@ -1,8 +1,8 @@
 package be.learningfever.testing.thermostat;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+
+import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -68,6 +68,25 @@ class ThermostatTest {
         assertTrue(therm.isHeating(), "Stupid thermostat");
         assertTrue(sensor.isCalled(), "Sensor wasnt called");
         assertTrue(heating.isHeating(), "Heating wasnt called");
+    }
+
+    @Test
+    void timedTest() throws InterruptedException {
+        Thread.sleep(INTERVAL * 3);
+        assertTimeout(
+                Duration.ofMillis(5),
+                () -> therm.isHeating()
+        );
+
+        assertTimeoutPreemptively(
+                Duration.ofMillis(5),
+                () -> therm.isHeating()
+        );
+    }
+
+    @RepeatedTest(value = 10)
+    void repeatedTest(RepetitionInfo info) {
+        System.out.println(info.getCurrentRepetition());
     }
 
     @AfterEach
